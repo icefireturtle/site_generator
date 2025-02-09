@@ -24,6 +24,5 @@ class TestHTMLNode(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             nodehtml.to_html()
 
-
 if __name__ == "__main__":
     unittest.main()
