@@ -2,12 +2,21 @@ from textnode import TextNode, TextType
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
-    print(f"HELLLLOOOO {old_nodes}")
-    if old_nodes.text.count(delimiter) == 2:
-        split_node = [x for x in old_nodes.text.split(delimiter) if x != delimiter + x + delimiter]
-        print(f"HELLLLOOOO NEWWWW {split_node}")
-        
-    else:
-        raise Exception("Invalid Markdown Syntax: Matching close delimiter missing")
-    
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.NORMAL:
+            new_nodes.append(old_node)
+            continue
+        split_nodes = []
+        section = old_node.text.split(delimiter)
+        if len(section) % 2 == 0:
+            raise ValueError("invalide markdown, formatted section not closed")
+        for i in range(len(section)):
+            if section[i] == "":
+                continue
+            if i % 2 == 0:
+                split_nodes.append(TextNode(section[i], TextType.NORMAL))
+            else:
+                split_nodes.append(TextNode(section[i], text_type))
+        new_nodes.extend(split_nodes)
+    return new_nodes    
 
