@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from split_nodes import split_nodes_delimiter, split_nodes_image, split_nodes_link
+from split_nodes import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
 
 class TestSplitNode(unittest.TestCase):
     def test_delim_bold(self):
@@ -104,6 +104,41 @@ class TestSplitNode(unittest.TestCase):
             new_nodes,
         )
 
+    def test_split_to_textnodes(self):
+        new_nodes = text_to_textnodes("This is some **bold** text with _italics_ and `code` and an image ![image](https://imgur.com/zZZZZZkqd.png) and a link [google](https://google.com)")
+        self.assertListEqual(
+            [
+                TextNode("This is some ", TextType.NORMAL),
+                TextNode("bold", TextType.BOLD),
+                TextNode(" text with ", TextType.NORMAL),
+                TextNode("italics", TextType.ITALIC),
+                TextNode(" and ", TextType.NORMAL),
+                TextNode("code", TextType.CODE),
+                TextNode(" and an image ", TextType.NORMAL),
+                TextNode("image", TextType.IMAGE, "https://imgur.com/zZZZZZkqd.png"),
+                TextNode(" and a link ", TextType.NORMAL),
+                TextNode("google", TextType.LINK, "https://google.com"),
+            ],
+            new_nodes,
+        )
+
+    def test_split_to_textnodes(self):
+        new_nodes = text_to_textnodes("Here is some _text_ that came with a linked [google](https://google.com) image ![image](https://imgur.com/AAAAAAAAfrqd.png) and some `code` that was **unexpected**")
+        self.assertListEqual(
+            [
+                TextNode("Here is some ", TextType.NORMAL),
+                TextNode("text", TextType.ITALIC),
+                TextNode(" that came with a linked ", TextType.NORMAL),
+                TextNode("google", TextType.LINK, "https://google.com"),
+                TextNode(" image ", TextType.NORMAL),
+                TextNode("image", TextType.IMAGE, "https://imgur.com/AAAAAAAAfrqd.png"),
+                TextNode(" and some ", TextType.NORMAL),
+                TextNode("code", TextType.CODE),
+                TextNode(" that was ", TextType.NORMAL),
+                TextNode("unexpected", TextType.BOLD),
+            ],
+            new_nodes,
+        )
 
 if __name__ == "__main__":
     unittest.main()
