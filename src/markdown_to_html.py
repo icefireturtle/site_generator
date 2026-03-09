@@ -17,19 +17,18 @@ def text_to_children(text):
 def markdown_to_html(md):
     blocks = markdown_to_blocks(md)
     block_list = []
-    parent_div = ParentNode("div", block_list)
 
     for block in blocks:
         type = block_to_block_type(block)
         
         
         match type:
-            case "paragraph":
+            case BlockType.PARAGRAPH:
                 cleaned_text = " ".join(block.split())
                 children = text_to_children(cleaned_text)
                 node = ParentNode("p", children)
                 block_list.append(node)
-            case "heading":
+            case BlockType.HEADING:
                 heading_number = 0
                 for char in block:
                     if char == "#":
@@ -40,12 +39,12 @@ def markdown_to_html(md):
                 children = text_to_children(text)
                 node = ParentNode(f"h{heading_number}", children)
                 block_list.append(node)
-            case "code":
-                code_content = block.strip("`").strip("\n")
+            case BlockType.CODE:
+                code_content = block.lstrip("`").lstrip("\n").rstrip("`")
                 code_node = LeafNode("code", code_content)
                 node = ParentNode("pre", [code_node])
                 block_list.append(node)
-            case "quote":
+            case BlockType.QUOTE:
                 lines = block.split("\n")
                 stripped_lines = []
                 for line in lines:
@@ -56,7 +55,7 @@ def markdown_to_html(md):
                 children = text_to_children(cleaned_text)
                 node = ParentNode("blockquote", children)
                 block_list.append(node)
-            case "unordered_list":
+            case BlockType.UNORDERED_LIST:
                 lines = block.split("\n")
                 li_lines = []
                 for line in lines:
@@ -64,7 +63,7 @@ def markdown_to_html(md):
                     li_lines.append(ParentNode("li", text_to_children(line_content)))
                 node = ParentNode("ul", li_lines)
                 block_list.append(node)
-            case "ordered_list":
+            case BlockType.ORDERED_LIST:
                 lines = block.split("\n")
                 li_lines = []
                 for line in lines:
@@ -74,4 +73,4 @@ def markdown_to_html(md):
                 node = ParentNode("ol", li_lines)
                 block_list.append(node)
 
-    return parent_div
+    return  ParentNode("div", block_list)
