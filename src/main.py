@@ -2,6 +2,10 @@ from textnode import TextNode, TextType
 from htmlnode import HTMLNode
 from leafnode import LeafNode
 from parentnode import ParentNode
+from copy_static import copy_static
+import os
+import shutil
+import time
 
 def main():
     node = TextNode("Stuff and things", TextType.ITALIC, "www.made_up_url.com")
@@ -10,7 +14,23 @@ def main():
     print(f"{node} \n {nodehtml}")
 
 
+    public = "./public"
+    static = "./static"
 
+    old_public = os.path.exists(public)
+
+    print(f"Old public exists: {old_public}")
+    if old_public == True:
+        print(f"removing old dir {public}")
+        time.sleep(1)
+        shutil.rmtree(public)
+        print(f"complete")
+
+    os.mkdir(public)
+
+    copy_static(static, public)
+
+    time.sleep(1)
     print(f"Happy Blank-Day")
 
 if __name__ == "__main__":
