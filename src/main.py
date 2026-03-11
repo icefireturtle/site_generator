@@ -17,6 +17,7 @@ def main():
 
     public = "./public"
     static = "./static"
+    content = "./content"
 
     old_public = os.path.exists(public)
 
