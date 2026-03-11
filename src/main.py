@@ -6,33 +6,36 @@ from copy_static import copy_static
 import os
 import shutil
 import time
+import sys
 from generate_content import generate_pages
 
 def main():
-    node = TextNode("Stuff and things", TextType.ITALIC, "www.made_up_url.com")
-    nodehtml = HTMLNode("p", "more stuff and things", None, {"href": "https://www.google.com", "target": "_blank"})
-    print(HTMLNode.props_to_html(nodehtml))
-    print(f"{node} \n {nodehtml}")
 
+    base_path = "/"
 
-    public = "./public"
+    if len(sys.argv) > 1:
+        base_path = sys.argv[1]
+        
+    #public = "./public"
+    docs = "./docs"
     static = "./static"
     content = "./content"
 
-    old_public = os.path.exists(public)
+    #old_public = os.path.exists(public)
+    old_docs = os.path.exists(docs)
 
-    print(f"Old public exists: {old_public}")
-    if old_public == True:
-        print(f"removing old dir {public}")
+    print(f"Old docs exists: {old_docs}")
+    if old_docs == True:
+        print(f"removing old dir {docs}")
         time.sleep(1)
-        shutil.rmtree(public)
+        shutil.rmtree(docs)
         print(f"complete")
 
-    os.mkdir(public)
+    os.mkdir(docs)
 
-    copy_static(static, public)
+    copy_static(static, docs)
 
-    generate_pages(content, "./template.html", public)
+    generate_pages(content, "./template.html", docs, base_path)
 
     time.sleep(1)
     print(f"Happy Blank-Day")

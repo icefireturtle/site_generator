@@ -12,7 +12,7 @@ def extract_title(md):
             return line[2:].strip()
     raise Exception("No title found in markdown file")
 
-def generate_pages(from_path, template_path, dest_path):
+def generate_pages(from_path, template_path, dest_path, base_path):
     
     dir_list = os.listdir(from_path)
     
@@ -37,11 +37,11 @@ def generate_pages(from_path, template_path, dest_path):
             print(f"Generating page from {from_path} to {copy_destination} using template {template_path}")
 
             with open (copy_extension, "w") as f:
-                f.write(template.replace("{{ Title }}", title).replace("{{ Content }}", html_content))
+                f.write(template.replace("{{ Title }}", title).replace("{{ Content }}", html_content).replace('href="/', f'href="{base_path}').replace('src="/', f'src="{base_path}'))
 
             time.sleep(1)
         else:
             copy_destination = os.path.join(dest_path, copy)
             print(f"creating destination {copy_destination}...")
             os.mkdir(copy_destination)
-            generate_pages(copy_path, template_path, copy_destination)
+            generate_pages(copy_path, template_path, copy_destination, base_path)
