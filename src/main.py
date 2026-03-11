@@ -6,7 +6,7 @@ from copy_static import copy_static
 import os
 import shutil
 import time
-from generate_content import generate_page
+from generate_content import generate_pages
 
 def main():
     node = TextNode("Stuff and things", TextType.ITALIC, "www.made_up_url.com")
@@ -32,7 +32,7 @@ def main():
 
     copy_static(static, public)
 
-    generate_page("./content/index.md", "./template.html", "./public/index.html")
+    generate_pages(content, "./template.html", public)
 
     time.sleep(1)
     print(f"Happy Blank-Day")

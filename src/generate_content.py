@@ -1,4 +1,7 @@
 import os
+import time
+
+from pathlib import Path
 
 from markdown_to_html import markdown_to_html
 
@@ -9,20 +12,36 @@ def extract_title(md):
             return line[2:].strip()
     raise Exception("No title found in markdown file")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_pages(from_path, template_path, dest_path):
+    
+    dir_list = os.listdir(from_path)
+    
+    for copy in dir_list:
 
-    contents = open(from_path).read()
-    node = markdown_to_html(contents)
-    html_content = node.to_html()
+        copy_path = os.path.join(from_path, copy)
+        copy_destination = os.path.join(dest_path, copy)
 
-    title = extract_title(contents)
-    dir_path = os.path.dirname(dest_path)
+        is_file = os.path.isfile(copy_path)
 
-    os.makedirs(dir_path, exist_ok=True)
+        if is_file == True:
+            print(f"copying {copy}...")
+            copy_extension = Path(copy_destination).with_suffix(".html")
+            contents = open(copy_path).read()
+            node = markdown_to_html(contents)
+            html_content = node.to_html()
 
-    template = open(template_path).read()
+            title = extract_title(contents)
 
-    print(f"Generating page from {from_path} to {dest_path} using template {template_path}")
+            template = open(template_path).read()
 
-    with open (dest_path, "w") as f:
-        f.write(template.replace("{{ Title }}", title).replace("{{ Content }}", html_content))
+            print(f"Generating page from {from_path} to {copy_destination} using template {template_path}")
+
+            with open (copy_extension, "w") as f:
+                f.write(template.replace("{{ Title }}", title).replace("{{ Content }}", html_content))
+
+            time.sleep(1)
+        else:
+            copy_destination = os.path.join(dest_path, copy)
+            print(f"creating destination {copy_destination}...")
+            os.mkdir(copy_destination)
+            generate_pages(copy_path, template_path, copy_destination)
